@@ -1,0 +1,59 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "teardrop-skills"
+version = "0.1.0"
+description = "Agent skills for Teardrop CLI workflows (install, publish, run, billing, marketplace, org, earnings)."
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.11"
+authors = [
+    { name = "Teardrop", email = "hello@teardrop.dev" },
+]
+keywords = ["teardrop", "ai", "agents", "skills", "cli"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Libraries",
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/teardrop-ai/teardrop-skills"
+Documentation = "https://github.com/teardrop-ai/teardrop-skills#readme"
+Repository = "https://github.com/teardrop-ai/teardrop-skills"
+"CLI Reference" = "https://github.com/teardrop-ai/teardrop-cli/blob/main/docs/cli-reference.md"
+
+[project.scripts]
+teardrop-skills = "teardrop_skills.__main__:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["teardrop_skills"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"skills" = "teardrop_skills/skills"
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/teardrop_skills",
+    "/skills",
+    "/tests",
+    "/README.md",
+    "/LICENSE",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]

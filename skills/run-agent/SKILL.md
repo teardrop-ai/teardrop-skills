@@ -1,0 +1,140 @@
+---
+name: run-agent
+description: Run one-shot or chat agents and automate them with schedules and event triggers.
+applyTo: "**/*"
+---
+
+## Purpose
+
+Execute Teardrop agents for the user: one-shot `run`, stateful `chat`, recurring
+`schedules`, and webhook-driven `event-triggers`. Use this skill whenever the user
+wants to prompt an agent, continue a thread, estimate cost, or automate runs.
+
+## Prerequisites
+
+- Teardrop CLI (`pip install teardrop-cli`, Python ≥ 3.11)
+- Authenticated session for paid runs (`teardrop auth status`)
+- Sufficient credits or x402 payment path (see `manage-billing` if runs fail on credit)
+- Optional: tool policy file, context JSON, marketplace subscriptions
+
+## Workflow
+
+### 1. Confirm session and balance when relevant
+
+```bash
+teardrop auth status
+teardrop balance
+```
+
+If unauthenticated → `install` skill. If balance is empty and runs fail → `manage-billing`.
+
+### 2. One-shot agent run (`teardrop run`)
+
+Best for scripts and single prompts:
+
+```bash
+teardrop run "What is the current ETH gas price?"
+teardrop run "Follow up" --thread <thread-id>
+teardrop run "Process this order" --context '{"order_id":"ord_123"}'
+teardrop run "Summarize news" --exclude platform/web_search
+teardrop run "Analyze this data" --estimate-cost
+teardrop run "Execute workflow" --policy-file policy.json
+teardrop run "..." --json --no-stream
+teardrop run "..." --json --with-ui          # UI components; ~60s extra overhead
+```
+
+Default CLI output is automation-friendly (`emit_ui=false`). Use `--with-ui` only
+when structured UI component data is required.
+
+### 3. Stateful chat (`teardrop chat`)
+
+Continues the same thread across invocations (stored in `~/.teardrop/config.toml`):
+
+```bash
+teardrop chat "What is the current ETH gas price?"   # creates/stores thread
+teardrop chat "Follow up on that"                    # continues stored thread
+teardrop chat "Start fresh" --new
+teardrop chat "Specific thread" --thread thr_abc123
+teardrop chat "..." --json
+```
+
+**Flag precedence (highest first):** `--new` → `--thread <id>` → stored thread → server-minted.
+
+Chat accepts the same options as `run`: `--context`, `--exclude`, `--policy-file`,
+`--estimate-cost`, `--with-ui`, `--no-stream`, `--base-url`.
+
+Note: `teardrop auth logout` clears the active chat thread id.
+
+### 4. Recurring schedules
+
+```bash
+teardrop schedules create \
+  --name hourly-briefing \
+  --prompt "Summarize open incidents" \
+  --interval-seconds 3600 \
+  --json
+
+teardrop schedules list --json
+teardrop schedules get <schedule-id> --json
+teardrop schedules update <schedule-id> --enabled false --json
+teardrop schedules update <schedule-id> --clear-callback-url
+teardrop schedules runs <schedule-id> --limit 50 --json
+teardrop schedules delete <schedule-id>
+teardrop schedules delete <schedule-id> --yes
+```
+
+### 5. Event triggers (signed inbound webhooks)
+
+```bash
+teardrop event-triggers create \
+  --name inbound-orders \
+  --prompt "Validate and process this order payload" \
+  --json
+
+teardrop event-triggers list --json
+teardrop event-triggers get <trigger-id> --json
+teardrop event-triggers update <trigger-id> --enabled false --json
+teardrop event-triggers update <trigger-id> --callback-url https://example.com/hook
+teardrop event-triggers runs <trigger-id> --limit 50 --json
+teardrop event-triggers rotate-secret <trigger-id> --json
+teardrop event-triggers delete <trigger-id>
+teardrop event-triggers delete <trigger-id> --yes
+```
+
+**Critical:** `create` and `rotate-secret` print the signing secret **once**. Store it
+immediately. Later `list` / `get` / `update` never return the plaintext secret again.
+
+### 6. Choose the right modality
+
+| Need | Command |
+|------|---------|
+| One-shot / CI / scripts | `teardrop run` |
+| Multi-turn conversation | `teardrop chat` |
+| Time-based recurrence | `teardrop schedules ...` |
+| Inbound webhook automation | `teardrop event-triggers ...` |
+
+## Reference
+
+- CLI reference — Running agents: https://github.com/teardrop-ai/teardrop-cli/blob/main/docs/cli-reference.md#running-agents
+- CLI reference — Chat sessions: https://github.com/teardrop-ai/teardrop-cli/blob/main/docs/cli-reference.md#chat-sessions
+- CLI reference — Schedules: https://github.com/teardrop-ai/teardrop-cli/blob/main/docs/cli-reference.md#schedules
+- CLI reference — Event triggers: https://github.com/teardrop-ai/teardrop-cli/blob/main/docs/cli-reference.md#event-triggers
+- JSON output schema: https://github.com/teardrop-ai/teardrop-cli/blob/main/docs/cli-json-schema.md
+- Exit codes: https://github.com/teardrop-ai/teardrop-cli/blob/main/docs/cli-reference.md#exit-codes
+
+## Troubleshooting
+
+| Symptom | Recovery |
+|---------|----------|
+| Run fails on credit | `teardrop balance`; open https://teardrop.dev/billing (CLI cannot top up) |
+| Malformed `--context` | Exit `2` — pass valid JSON object string |
+| Lost chat continuity | Check stored thread; use `--thread <id>` or `--new`; logout clears thread |
+| Forgot trigger secret | `teardrop event-triggers rotate-secret <id>` and store the new secret immediately |
+| Schedule/trigger failures | Inspect `... runs <id>` for status, cost, and error message |
+| Need different tools | Subscribe via `discover-marketplace` or adjust `--exclude` / `--policy-file` |
+
+## Exit codes
+
+- `0` — success
+- `1` — error (auth, rate limit, API, insufficient credit)
+- `2` — invalid input (e.g. malformed `--context` JSON)
