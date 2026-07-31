@@ -5,9 +5,16 @@ from __future__ import annotations
 from importlib import resources
 from pathlib import Path
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
-__all__ = ["__version__", "skills_path", "list_skills"]
+__all__ = [
+    "__version__",
+    "skills_path",
+    "list_skills",
+    "install_skills",
+    "detect_harness",
+    "list_harnesses",
+]
 
 _SKILL_NAMES = (
     "install",
@@ -52,3 +59,11 @@ def list_skills() -> list[str]:
         p.name for p in root.iterdir() if p.is_dir() and (p / "SKILL.md").is_file()
     )
     return found if found else list(_SKILL_NAMES)
+
+
+# Re-export harness public API.
+from teardrop_skills.harnesses import (  # noqa: E402
+    detect_harness,
+    install_skills,
+    list_harnesses,
+)

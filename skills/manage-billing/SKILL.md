@@ -54,7 +54,7 @@ Use date filters to explain spend over a window (token + run totals).
 
 The CLI does **not** support direct top-ups. Direct the user to:
 
-**https://teardrop.dev/billing**
+**https://teardrop.dev/**
 
 If a run fails for insufficient credit, the agent/runtime also surfaces this link.
 Do not invent CLI top-up commands.
@@ -77,13 +77,13 @@ For LLM key / routing changes, use the `manage-org` skill (`llm-config`).
 
 - CLI reference — Billing & credits: https://github.com/teardrop-ai/teardrop-cli/blob/main/docs/cli-reference.md#billing--credits
 - CLI reference — Exit codes: https://github.com/teardrop-ai/teardrop-cli/blob/main/docs/cli-reference.md#exit-codes
-- Dashboard billing: https://teardrop.dev/billing
+- Dashboard billing: https://teardrop.dev/
 
 ## Troubleshooting
 
 | Symptom | Recovery |
 |---------|----------|
-| Agent paused / insufficient credit | `teardrop balance` then open https://teardrop.dev/billing |
+| Agent paused / insufficient credit | `teardrop balance` then open https://teardrop.dev/ |
 | Unexpected spend | `teardrop usage --start YYYY-MM-DD --end YYYY-MM-DD --json` |
 | Auth errors on balance/usage | Re-authenticate via `install` skill |
 | User asks to top up in CLI | Explain dashboard-only path; do not fabricate commands |

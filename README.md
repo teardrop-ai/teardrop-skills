@@ -69,15 +69,36 @@ print(list_skills())
 
 ### Wire into an agent harness
 
-Symlink or copy the skills tree into your harness skills directory:
-
 ```bash
-# example: link the whole pack
-ln -s "$(teardrop-skills)" /path/to/harness/skills/teardrop
+# Auto-detect harness and install
+teardrop-skills install
 
-# or copy a single skill
-cp -r "$(teardrop-skills)/install" /path/to/harness/skills/install
+# Or specify explicitly
+teardrop-skills install --harness claude-code
+teardrop-skills install --harness cursor
+teardrop-skills install --harness opencode
+
+# Preview without making changes
+teardrop-skills install --dry-run
+
+# List supported harnesses
+teardrop-skills install --list-harnesses
 ```
+
+Supported harnesses:
+
+| Harness | Target | Mode |
+|---------|--------|------|
+| `claude-code` | `.claude/skills/<name>/SKILL.md` | per-skill symlink/junction |
+| `cline` | `.cline/skills/<name>/SKILL.md` | per-skill symlink/junction |
+| `copilot` | `.github/skills/<name>/SKILL.md` | per-skill symlink/junction |
+| `pi` | `.pi/skills/<name>/SKILL.md` | per-skill symlink/junction |
+| `opencode` | `.opencode/skills/<name>/SKILL.md` | per-skill symlink/junction |
+| `cursor` | `.cursor/rules/teardrop-*.mdc` | SKILL.md → .mdc conversion |
+| `path` | `--path /custom/location` | per-skill symlink/junction |
+
+On Windows, junctions are used with automatic fallback to directory copy if
+elevation is unavailable.
 
 On Windows (PowerShell):
 
