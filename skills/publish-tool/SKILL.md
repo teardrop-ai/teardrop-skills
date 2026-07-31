@@ -2,6 +2,7 @@
 name: publish-tool
 description: Scaffold, probe, publish, and manage Teardrop marketplace tools end-to-end.
 applyTo: "**/*"
+license: MIT
 ---
 
 ## Purpose

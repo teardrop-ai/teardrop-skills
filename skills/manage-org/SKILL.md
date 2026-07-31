@@ -2,6 +2,7 @@
 name: manage-org
 description: Configure org LLM/BYOK settings, MCP servers, model benchmarks, and local CLI config.
 applyTo: "**/*"
+license: MIT
 ---
 
 ## Purpose

@@ -181,14 +181,37 @@ pip install -e ".[dev]"
 pytest
 ```
 
-Smoke tests assert all seven `SKILL.md` files exist, YAML frontmatt2r parses, and
-required keys (`name`, `description`) are present.
+Smoke tests assert all seven `SKILL.md` files exist, YAML frontmatter parses, and
+required keys (`name`, `description`, `applyTo`) are present.
+
+### Production-readiness gates
+
+These gates run in CI and must pass before a release is tagged:
+
+- **Structural tests** (`tests/test_skills_exist.py`): skill files, frontmatter,
+  required sections, and CLI doc anchors exist.
+- **CLI contract tests** (`tests/test_cli_contract.py`): every `teardrop …`
+  command referenced in a skill's fenced code blocks is validated against the
+  **installed** `teardrop-cli` Click/Typer command tree (in-process, no shell
+  execution). Doc anchors are checked against a pinned `cli-reference.md`
+  fixture. Skipped automatically if `teardrop-cli` is not installed.
+- **Safe smoke tests** (`tests/test_cli_smoke.py`, marker `smoke`): only
+  `--help` / `--version` invocations of the CLI groups used by skills. Never
+  calls authenticated or mutating commands. Skipped if `teardrop-cli` is absent.
+
+Run locally (requires `teardrop-cli` for contract/smoke):
+
+```bash
+pip install -e ".[dev]"
+pytest                      # structural + contract + smoke (if CLI present)
+pytest -m "not smoke"       # structural + contract only
+```
 
 ---
 
 ## Versioning
 
-Independent semver from `teardrop-cli`. Current version: **0.2.0**.
+Independent semver from `teardrop-cli`. Current version: **0.3.0**.
 
 ---
 

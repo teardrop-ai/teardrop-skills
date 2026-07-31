@@ -2,6 +2,7 @@
 name: discover-marketplace
 description: Browse, search, subscribe, and unsubscribe Teardrop marketplace tools.
 applyTo: "**/*"
+license: MIT
 ---
 
 ## Purpose

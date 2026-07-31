@@ -71,6 +71,7 @@ def test_skill_frontmatter_valid(name: str, skill_files: dict[str, Path]) -> Non
     assert meta["name"] == name, f"{name}: name field {meta['name']!r} != directory"
     assert meta["description"], f"{name}: description must be non-empty"
     assert "applyTo" in meta, f"{name}: frontmatter missing 'applyTo'"
+    assert meta.get("license") == "MIT", f"{name}: frontmatter license must be MIT"
 
 
 @pytest.mark.parametrize("name", EXPECTED_SKILLS)

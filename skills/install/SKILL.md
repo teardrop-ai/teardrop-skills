@@ -2,6 +2,7 @@
 name: install
 description: Install Teardrop CLI, authenticate, and complete first-time onboarding.
 applyTo: "**/*"
+license: MIT
 ---
 
 ## Purpose

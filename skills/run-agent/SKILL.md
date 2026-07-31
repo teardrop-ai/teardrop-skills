@@ -2,6 +2,7 @@
 name: run-agent
 description: Run one-shot or chat agents and automate them with schedules and event triggers.
 applyTo: "**/*"
+license: MIT
 ---
 
 ## Purpose

@@ -2,6 +2,7 @@
 name: manage-billing
 description: Check Teardrop credit balance and usage; direct users to the dashboard for top-ups.
 applyTo: "**/*"
+license: MIT
 ---
 
 ## Purpose

@@ -2,6 +2,7 @@
 name: withdraw-earnings
 description: Check marketplace earnings and withdraw USDC to the registered settlement wallet.
 applyTo: "**/*"
+license: MIT
 ---
 
 ## Purpose

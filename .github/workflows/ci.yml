@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: "Test (py${{ matrix.python }})"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: Install package + dev extras
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+
+      - name: Install teardrop-cli (latest compatible)
+        # Pin typer/click to a pair where `teardrop <group> --help` returns
+        # exit code 0 (newer typer+click raise an uncaught Exit(0) -> rc=1).
+        run: |
+          python -m pip install "typer==0.12.5" "click==8.1.7"
+          python -m pip install "teardrop-cli>=0.3.2,<0.4"
+
+      - name: Run structural + contract + smoke tests
+        run: python -m pytest -q
+
+  contract-pinned:
+    name: "Contract (pinned teardrop-cli lower bound)"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install package + dev extras
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+      - name: Install teardrop-cli at lower bound
+        run: |
+          python -m pip install "typer==0.12.5" "click==8.1.7"
+          python -m pip install "teardrop-cli==0.3.2"
+      - name: Run CLI contract tests
+        run: python -m pytest -q tests/test_cli_contract.py
