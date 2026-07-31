@@ -13,21 +13,23 @@ during initial publish (see `publish-tool`).
 
 ## Prerequisites
 
-- Teardrop CLI (`pip install teardrop-cli`, Python ≥ 3.11)
-- Authenticated session as the tool author org (`teardrop auth status`)
+- `teardrop` on PATH (comes with `teardrop-skills` — verify: `teardrop --version`)
+- Authenticated session as the tool author org (see auth gate below)
 - Settlement wallet already registered (typically during first
   `teardrop tools publish --settlement-wallet 0x...`)
 - Positive earnings balance for withdrawals
 
-## Workflow
-
-### 1. Confirm auth
+## Auth gate
 
 ```bash
 teardrop auth status
 ```
 
-### 2. Check earnings balance
+If exit code ≠ `0` → hand off to `install` skill first.
+
+## Workflow
+
+### 1. Check earnings balance
 
 ```bash
 teardrop earnings balance
@@ -89,6 +91,15 @@ teardrop earnings withdrawals --limit 20 --json
 | Confused with org credits | Credits (`teardrop balance`) fund runs; earnings fund author payouts |
 | Auth / permission errors | Re-auth as the author org; confirm tool ownership via `tools list` |
 | Exit code `2` | Invalid amount or flags — fix input and retry |
+
+## Missing inputs & fallbacks
+
+| Missing | Agent action |
+|---------|--------------|
+| No withdrawal amount | Run `teardrop earnings balance` first. Suggest `min(balance, 10.00)` USDC as the amount. Ask the user to confirm. |
+| No settlement wallet | Cannot withdraw. Run `teardrop tools list` to check existing tools; if none, hand off to `publish-tool` to publish with `--settlement-wallet`. If tools exist, use `teardrop tools update <tool> --settlement-wallet 0x...`. |
+| No tool filter for history | Omit `--tool` — show all earnings history. |
+| User confused about balance vs credits | Show the comparison table in step 6. Credits (`teardrop balance`) fund runs; earnings (`teardrop earnings balance`) are withdrawable USDC. |
 
 ## Exit codes
 

@@ -12,21 +12,24 @@ wants to prompt an agent, continue a thread, estimate cost, or automate runs.
 
 ## Prerequisites
 
-- Teardrop CLI (`pip install teardrop-cli`, Python ≥ 3.11)
-- Authenticated session for paid runs (`teardrop auth status`)
+- `teardrop` on PATH (comes with `teardrop-skills` — verify: `teardrop --version`)
+- Authenticated session for paid runs (see auth gate below)
 - Sufficient credits or x402 payment path (see `manage-billing` if runs fail on credit)
 - Optional: tool policy file, context JSON, marketplace subscriptions
 
-## Workflow
+## Auth gate
 
-### 1. Confirm session and balance when relevant
+Before any paid run:
 
 ```bash
 teardrop auth status
-teardrop balance
 ```
 
-If unauthenticated → `install` skill. If balance is empty and runs fail → `manage-billing`.
+If exit code ≠ `0` → hand off to `install` skill. If balance is empty and runs fail → `manage-billing`.
+
+## Workflow
+
+### 1. One-shot agent run (`teardrop run`)
 
 ### 2. One-shot agent run (`teardrop run`)
 
@@ -132,6 +135,18 @@ immediately. Later `list` / `get` / `update` never return the plaintext secret a
 | Forgot trigger secret | `teardrop event-triggers rotate-secret <id>` and store the new secret immediately |
 | Schedule/trigger failures | Inspect `... runs <id>` for status, cost, and error message |
 | Need different tools | Subscribe via `discover-marketplace` or adjust `--exclude` / `--policy-file` |
+
+## Missing inputs & fallbacks
+
+| Missing | Agent action |
+|---------|--------------|
+| Empty or vague prompt | Ask **one** clarifying question: "What goal should the agent accomplish? Give me a concrete example of the output you want." Then formulate a specific prompt. |
+| No thread ID for follow-up | Run `teardrop chat "<prompt>"` — it auto-continues the stored thread. If the user wants a fresh conversation, use `--new`. |
+| No schedule interval | Ask the user how often (e.g., "every hour", "daily at 9am"). Convert to `--interval-seconds` (3600, 86400, etc.). |
+| No event trigger name | Derive from the prompt: lowercase, hyphenated. Example: "process orders" → `inbound-orders`. |
+| No policy file | Omit `--policy-file` — runs use default tool access. |
+| No `--context` JSON | Omit `--context` — the agent works without structured context. |
+| User wants cost estimate | Run with `--estimate-cost` (no run performed, just prints cost). |
 
 ## Exit codes
 

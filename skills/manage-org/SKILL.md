@@ -13,19 +13,21 @@ settings. Use this skill for platform setup — not for end-user agent prompts
 
 ## Prerequisites
 
-- Teardrop CLI (`pip install teardrop-cli`, Python ≥ 3.11)
+- `teardrop` on PATH (comes with `teardrop-skills` — verify: `teardrop --version`)
 - Authenticated session for org-mutating commands (`llm-config`, `mcp`)
 - `models benchmarks` public catalogue works without auth; `--org` metrics need auth
 
-## Workflow
-
-### 1. Confirm auth (for mutating commands)
+## Auth gate (mutating commands only)
 
 ```bash
 teardrop auth status
 ```
 
-### 2. LLM configuration
+If exit code ≠ `0` → hand off to `install` skill first.
+
+## Workflow
+
+### 1. LLM configuration
 
 Inspect current config (5-minute cache by default):
 
@@ -40,22 +42,21 @@ One-shot BYOK wizard:
 teardrop llm-config byok
 ```
 
-Set provider, model, and routing:
+Set provider and routing (omit `--model` to use the provider's default — do not hardcode model IDs):
 
 ```bash
-# Quality tier (default)
-teardrop llm-config set --provider anthropic --model claude-sonnet-4-6 --routing quality
+# Default tier
+teardrop llm-config set --provider anthropic --routing default
 
 # Cost tier
-teardrop llm-config set --provider openrouter --model deepseek-chat --routing cost
+teardrop llm-config set --provider openrouter --routing cost
 
 # Speed tier
-teardrop llm-config set --provider google --model gemini-3-flash --routing speed
+teardrop llm-config set --provider google --routing speed
 
 # Advanced tuning
 teardrop llm-config set \
   --provider anthropic \
-  --model claude-sonnet-4-6 \
   --max-tokens 8000 \
   --temperature 0.7 \
   --timeout-seconds 60
@@ -69,13 +70,13 @@ BYOK key handling (never echo secrets into logs or commits):
 
 ```bash
 # Stdin pipe preferred (stays out of shell history)
-# Unix:  cat "$key_file" | teardrop llm-config set --provider anthropic --model claude-sonnet-4-6 --byok-key -
+# Unix:  cat "$key_file" | teardrop llm-config set --provider anthropic --byok-key -
 # PowerShell:
 Get-Content "$key_file" | teardrop llm-config set `
-  --provider anthropic --model claude-sonnet-4-6 --byok-key -
+  --provider anthropic --byok-key -
 
 # Remove BYOK key
-teardrop llm-config set --provider anthropic --model claude-sonnet-4-6 --clear-key
+teardrop llm-config set --provider anthropic --clear-key
 ```
 
 Revert to platform defaults:
@@ -146,6 +147,17 @@ Writable keys: `api_url`, `email`, `org_id`. Tokens/secrets only via `auth login
 | Config set rejected for token fields | Manage tokens only through `auth login` / `logout` |
 | Still out of credits after BYOK | Expected orchestration fee — use `manage-billing` |
 | Exit code `2` | Invalid flags or values — fix input and retry |
+
+## Missing inputs & fallbacks
+
+| Missing | Agent action |
+|---------|--------------|
+| No provider/model preference | Default to `anthropic` / `default` routing. Explain the user can change later. |
+| No BYOK key | Skip `--byok-key` — use Teardrop's pooled provider keys. The org still needs credits for the orchestration fee (see `manage-billing`). |
+| No routing preference | Default to `default`. |
+| No MCP server URL | Ask the user for the URL. If they don't have one, skip MCP setup. |
+| No org ID for benchmarks | Run `teardrop auth status --json` to extract `org_id`. |
+| User wants to change config key | Only `api_url`, `email`, `org_id` are writable via `config set`. Tokens/secrets require `auth login` / `auth logout`. |
 
 ## Exit codes
 

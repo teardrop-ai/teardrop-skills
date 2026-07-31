@@ -8,15 +8,11 @@ the full CLI reference.
 
 ```bash
 pip install teardrop-skills
-teardrop-skills            # prints installed skills path
+teardrop-skills            # prints installed skills path + next steps
 teardrop-skills --list     # lists skill names
 ```
 
-Requires Python ≥ 3.11. Pair with [`teardrop-cli`](https://github.com/teardrop-ai/teardrop-cli):
-
-```bash
-pip install teardrop-cli
-```
+Requires Python ≥ 3.11. `teardrop-cli` is installed automatically as a dependency (compatible with `teardrop-cli >=0.3.2, <0.4`).
 
 ---
 
@@ -40,6 +36,13 @@ pip install teardrop-cli
 
 ```bash
 pip install teardrop-skills
+```
+
+This also installs `teardrop-cli` automatically. Verify:
+
+```bash
+teardrop --version
+teardrop-skills --version
 ```
 
 From a source checkout:
@@ -85,6 +88,18 @@ New-Item -ItemType Junction -Path ".\harness-skills\teardrop" -Target $src
 
 Each skill is a folder containing `SKILL.md` with YAML frontmatter
 (`name`, `description`, `applyTo`).
+
+---
+
+## First-time publish chain
+
+For a user publishing their first tool, the skills chain in order:
+
+1. **`install`** — install CLI, authenticate (SIWE preferred — generates a wallet)
+2. **`publish-tool`** — scaffold, probe, publish with settlement wallet
+3. **`run-agent`** — test the tool with a quick agent run
+4. **`manage-billing`** — check credits if runs fail
+5. **`withdraw-earnings`** — only after earnings accumulate
 
 ---
 
@@ -145,14 +160,14 @@ pip install -e ".[dev]"
 pytest
 ```
 
-Smoke tests assert all seven `SKILL.md` files exist, YAML frontmatter parses, and
+Smoke tests assert all seven `SKILL.md` files exist, YAML frontmatt2r parses, and
 required keys (`name`, `description`) are present.
 
 ---
 
 ## Versioning
 
-Independent semver from `teardrop-cli`. This package starts at **0.1.0**.
+Independent semver from `teardrop-cli`. Current version: **0.2.0**.
 
 ---
 

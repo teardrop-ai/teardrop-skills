@@ -14,20 +14,20 @@ session checks, or logout.
 ## Prerequisites
 
 - Python ≥ 3.11
+- `teardrop` on PATH (comes with `teardrop-skills` — verify: `teardrop --version`)
 - Network access to PyPI and the Teardrop API
 - For SIWE: ability to generate or supply an Ethereum private key (never commit keys)
 - For email auth: a password ≥ 8 characters with ≥ 1 digit
 
 ## Workflow
 
-### 1. Install the CLI
+### 1. Verify CLI is installed
 
 ```bash
-pip install teardrop-cli
 teardrop --version
 ```
 
-Exit code `0` confirms the binary is on `PATH`.
+Exit code `0` confirms the binary is on `PATH`. If not found, reinstall: `pip install teardrop-skills`.
 
 ### 2. Prefer guided onboarding when the user is new
 
@@ -105,12 +105,27 @@ active chat thread id.
 
 | Symptom | Recovery |
 |---------|----------|
-| `teardrop` not found | Ensure install env is active; re-run `pip install teardrop-cli` and confirm `teardrop --version` |
+| `teardrop` not found | Reinstall: `pip install teardrop-skills` (includes `teardrop-cli`). Ensure the install bin dir is on PATH. |
 | Auth fails with env set | Unset stale `TEARDROP_*` vars; env credentials take precedence over interactive login |
 | SIWE / keyring errors | Do not use plaintext keyring fallbacks; omit `--save-key` unless an encrypted backend is available |
 | Signup rejected | Password must be ≥ 8 chars with ≥ 1 digit; org name 1–200 chars; rate limit 3 signups/min/email |
 | Exit code `1` | Auth, rate limit, or API error — inspect stderr and retry after fixing credentials |
 | Exit code `2` | Invalid input — fix flags/arguments and retry |
+
+## Missing inputs & fallbacks
+
+| Missing | Agent action |
+|---------|--------------|
+| No credentials at all | Run `teardrop auth login --siwe --generate-wallet` — zero-input SIWE creates a wallet and signs in automatically. No email or password needed. |
+| Email given, no password | Run `teardrop auth signup --email <email> --org-name <org>` (interactive — prompts for password). If no org name, use `acme` or ask. |
+| Email given, password given | Run `teardrop auth login --email <email>` (secret prompted interactively). |
+| Org name missing for signup | Use the email local-part (before `@`) as org name, or ask the user. |
+| `auth status` fails | Re-run login with the same method; check env vars (step 5). |
+
+**Decision order:**
+1. If user provided explicit credentials → use them.
+2. If user said nothing → `--siwe --generate-wallet` (no input required).
+3. If user said "I have an account" but no details → ask for email.
 
 ## Exit codes
 

@@ -80,6 +80,12 @@ def test_skill_has_required_sections(name: str, skill_files: dict[str, Path]) ->
         assert heading in text, f"{name}: missing section {heading}"
 
 
+@pytest.mark.parametrize("name", EXPECTED_SKILLS)
+def test_skill_has_missing_inputs_section(name: str, skill_files: dict[str, Path]) -> None:
+    text = skill_files[name].read_text(encoding="utf-8")
+    assert "## Missing inputs" in text, f"{name}: missing 'Missing inputs & fallbacks' section"
+
+
 def test_no_unexpected_top_level_skills() -> None:
     if not SKILLS_DIR.is_dir():
         pytest.skip("skills dir missing")
@@ -97,6 +103,21 @@ def test_package_skills_path_importable() -> None:
     assert set(EXPECTED_SKILLS).issubset(set(names))
     for name in EXPECTED_SKILLS:
         assert (path / name / "SKILL.md").is_file()
+
+
+def test_version_consistency() -> None:
+    """pyproject.toml version matches teardrop_skills.__version__."""
+    import tomllib
+
+    from teardrop_skills import __version__ as pkg_version
+
+    pyproject = ROOT / "pyproject.toml"
+    with open(pyproject, "rb") as f:
+        data = tomllib.load(f)
+    assert data["project"]["version"] == pkg_version, (
+        f"pyproject.toml version {data['project']['version']} != "
+        f"__version__ {pkg_version}"
+    )
 
 
 def test_cli_anchors_are_documented_slugs() -> None:

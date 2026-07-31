@@ -12,18 +12,20 @@ funds — top-ups and payment methods are dashboard-only.
 
 ## Prerequisites
 
-- Teardrop CLI (`pip install teardrop-cli`, Python ≥ 3.11)
-- Authenticated session (`teardrop auth status`)
+- `teardrop` on PATH (comes with `teardrop-skills` — verify: `teardrop --version`)
+- Authenticated session (see auth gate below)
 
-## Workflow
-
-### 1. Confirm auth
+## Auth gate
 
 ```bash
 teardrop auth status
 ```
 
-### 2. Check credit balance
+If exit code ≠ `0` → hand off to `install` skill.
+
+## Workflow
+
+### 1. Check credit balance
 
 ```bash
 teardrop balance
@@ -87,6 +89,15 @@ For LLM key / routing changes, use the `manage-org` skill (`llm-config`).
 | User asks to top up in CLI | Explain dashboard-only path; do not fabricate commands |
 | BYOK still needs credits | Expected — orchestration fee still requires credits or x402 |
 | Exit code `2` | Invalid date/flags — correct input and retry |
+
+## Missing inputs & fallbacks
+
+| Missing | Agent action |
+|---------|--------------|
+| No date range for usage | Omit `--start`/`--end` — shows all-time totals. If the user asks about a specific period, ask for dates. |
+| User wants to top up | Direct to https://teardrop.dev/. The CLI has no top-up command. Do not fabricate one. |
+| User asks "why did my run fail?" | Run `teardrop balance` and `teardrop usage`. If balance is low/zero, explain credits are exhausted and link to dashboard. |
+| User confused about BYOK + credits | Explain: BYOK pays the model provider directly but Teardrop still charges an orchestration fee (credits or x402). See `manage-org` for BYOK setup. |
 
 ## Exit codes
 

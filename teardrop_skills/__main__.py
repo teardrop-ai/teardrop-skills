@@ -35,6 +35,17 @@ def main(argv: list[str] | None = None) -> int:
     if args.list:
         for name in list_skills():
             print(name)
+
+    # Post-install hint on first run (no flags).
+    if not args.list and not any(a.startswith("--version") for a in argv or []):
+        print(file=sys.stderr)
+        print("--- Next steps ---", file=sys.stderr)
+        print("1. Run:  teardrop quickstart", file=sys.stderr)
+        print("2. Symlink or copy this skills folder into your agent harness.", file=sys.stderr)
+        print("   Example:  ln -s <path> /path/to/harness/skills/teardrop", file=sys.stderr)
+        print("   Windows:  New-Item -ItemType Junction -Path .\\harness\\teardrop -Target <path>", file=sys.stderr)
+        print(file=sys.stderr)
+
     return 0
 
 
