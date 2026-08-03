@@ -111,7 +111,11 @@ def test_package_skills_path_importable() -> None:
 
 
 def test_version_consistency() -> None:
-    """pyproject.toml version matches teardrop_skills.__version__."""
+    """pyproject.toml is the sole source of truth for the version.
+
+    ``teardrop_skills.__version__`` is derived from the installed distribution
+    metadata (generated from pyproject.toml), so it must always match.
+    """
     import tomllib
 
     from teardrop_skills import __version__ as pkg_version

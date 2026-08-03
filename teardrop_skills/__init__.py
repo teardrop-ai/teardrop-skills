@@ -3,9 +3,24 @@
 from __future__ import annotations
 
 from importlib import resources
+from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 
-__version__ = "0.3.1"
+# pyproject.toml is the sole source of truth for the version. Prefer reading it
+# directly when present (source checkout / editable install); fall back to the
+# installed distribution metadata (generated from pyproject.toml) for installed
+# wheels, where pyproject.toml is not shipped.
+_pyproject = Path(__file__).resolve().parent.parent / "pyproject.toml"
+if _pyproject.is_file():
+    import tomllib
+
+    with _pyproject.open("rb") as _f:
+        __version__ = tomllib.load(_f)["project"]["version"]
+else:  # pragma: no cover - installed wheel without pyproject.toml
+    try:
+        __version__ = version("teardrop-skills")
+    except PackageNotFoundError:  # pragma: no cover - unexpected
+        __version__ = "0.0.0"
 
 __all__ = [
     "__version__",

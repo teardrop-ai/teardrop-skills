@@ -28,7 +28,24 @@ session checks, or logout.
 teardrop --version
 ```
 
-Exit code `0` confirms the binary is on `PATH`. If not found, reinstall: `pip install teardrop-skills`.
+Exit code `0` confirms the binary is on `PATH`. If not found, reinstall:
+`pip install teardrop-skills`.
+
+**Locate the binary if it's not on PATH.** When installed into a virtualenv,
+the `teardrop` executable may land in a `Scripts/` (Windows) or `bin/`
+(POSIX) directory that isn't on `PATH`. Check for it before assuming the
+install failed:
+
+```powershell
+# Windows (venv)
+Get-ChildItem venv/Scripts/teardrop*
+
+# POSIX (venv)
+ls venv/bin/teardrop
+```
+
+If present, invoke it directly (e.g. `venv/Scripts/teardrop --version`) or add
+that directory to `PATH`.
 
 ### 2. Prefer guided onboarding when the user is new
 
@@ -106,7 +123,7 @@ active chat thread id.
 
 | Symptom | Recovery |
 |---------|----------|
-| `teardrop` not found | Reinstall: `pip install teardrop-skills` (includes `teardrop-cli`). Ensure the install bin dir is on PATH. |
+| `teardrop` not found | Reinstall: `pip install teardrop-skills` (includes `teardrop-cli`). If installed into a venv, the binary may be in `venv/Scripts/` (Windows) or `venv/bin/` (POSIX) — check there and add it to PATH or invoke it directly. |
 | Auth fails with env set | Unset stale `TEARDROP_*` vars; env credentials take precedence over interactive login |
 | SIWE / keyring errors | Do not use plaintext keyring fallbacks; omit `--save-key` unless an encrypted backend is available |
 | Signup rejected | Password must be ≥ 8 chars with ≥ 1 digit; org name 1–200 chars; rate limit 3 signups/min/email |

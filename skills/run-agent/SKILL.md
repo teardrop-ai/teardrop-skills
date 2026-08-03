@@ -50,6 +50,13 @@ teardrop run "..." --json --with-ui          # UI components; ~60s extra overhea
 Default CLI output is automation-friendly (`emit_ui=false`). Use `--with-ui` only
 when structured UI component data is required.
 
+**Long or multi-line prompts:** `teardrop run` / `teardrop chat` take the prompt
+as a positional argument. For long or multi-line prompts, avoid unwieldy inline
+one-liners — write the prompt to a file and read it into the argument (e.g.
+`teardrop run "$(Get-Content prompt.txt -Raw)"` on PowerShell, or
+`teardrop run "$(cat prompt.txt)"` on POSIX). For recurring schedules, use the
+native `--prompt-file` flag (see step 4).
+
 ### 3. Stateful chat (`teardrop chat`)
 
 Continues the same thread across invocations (stored in `~/.teardrop/config.toml`):
@@ -78,6 +85,13 @@ teardrop schedules create \
   --interval-seconds 3600 \
   --json
 
+# Long/multi-line prompt from a UTF-8 file (or '-' for stdin)
+teardrop schedules create \
+  --name hourly-briefing \
+  --prompt-file prompt.txt \
+  --interval-seconds 3600 \
+  --json
+
 teardrop schedules list --json
 teardrop schedules get <schedule-id> --json
 teardrop schedules update <schedule-id> --enabled false --json
@@ -86,6 +100,10 @@ teardrop schedules runs <schedule-id> --limit 50 --json
 teardrop schedules delete <schedule-id>
 teardrop schedules delete <schedule-id> --yes
 ```
+
+`--prompt` and `--prompt-file` are mutually exclusive — pass exactly one. Invalid
+UTF-8 or unreadable files produce a clean CLI error. After creating or updating a
+schedule, verify with `teardrop schedules get <schedule-id> --json`.
 
 ### 5. Event triggers (signed inbound webhooks)
 

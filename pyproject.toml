@@ -23,7 +23,7 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Topic :: Software Development :: Libraries",
 ]
-dependencies = ["teardrop-cli>=0.3.3,<0.4"]
+dependencies = ["teardrop-cli>=0.3.4,<0.4"]
 
 [project.optional-dependencies]
 dev = [
