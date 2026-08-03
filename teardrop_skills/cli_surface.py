@@ -64,7 +64,9 @@ def _strip_inline_comment(line: str) -> str:
     return _INLINE_COMMENT_RE.sub("", line).rstrip()
 
 
-def extract_skill_commands(text: str, source_file: Path | None = None) -> list[SkillCommand]:
+def extract_skill_commands(
+    text: str, source_file: Path | None = None
+) -> list[SkillCommand]:
     """Extract normalized ``teardrop`` commands from skill markdown *text*.
 
     Only fenced code blocks are scanned. Placeholders (``<...>``), quoted

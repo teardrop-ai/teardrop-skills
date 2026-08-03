@@ -38,6 +38,21 @@ teardrop marketplace info acme/weather
 
 Tool identifiers use `org/name` form (example: `acme/weather`).
 
+### 1b. Evaluate tool quality with public reputation (no auth required)
+
+```bash
+teardrop marketplace reputation
+teardrop marketplace reputation acme/weather
+teardrop marketplace reputation acme/weather --json
+```
+
+Public reputation shows aggregate quality metrics for active marketplace tools
+(`score`, `success`, `sample`, `confidence`, `freshness`, `latency_ms`,
+`callers`). Use it to help the user evaluate a tool's quality before
+subscribing. Passing an `ORG/TOOL` filters to that exact tool; if there is no
+match it prints `No public reputation found for '<name>'.` and exits `1`.
+Empty data prints `No public reputation data available.` (exit `0`).
+
 ### 2. Ensure auth before mutating subscriptions
 
 ```bash
@@ -91,6 +106,7 @@ teardrop run "Use marketplace weather data for London"
 | Subscribe fails with auth error | `teardrop auth login` / `auth status`, then retry |
 | Unknown tool id | `marketplace search` / `list`, then `info org/name` |
 | Tool not used in a run | Confirm subscription; check `--exclude` / `--policy-file` on `run`/`chat` |
+| Need to evaluate tool quality | `marketplace reputation [org/name]` (no auth required) |
 | Need to publish your own tool | Use `publish-tool` skill |
 | Exit code `2` | Invalid tool id or flags — fix input and retry |
 
@@ -101,6 +117,7 @@ teardrop run "Use marketplace weather data for London"
 | No search query | Run `teardrop marketplace list` first. Show the user the first 5–10 results and ask what looks relevant. If a category is guessable ("data", "weather", "finance"), use `--category`. |
 | No tool ID for subscribe | Search first: `teardrop marketplace search "<keyword>"` to find the `org/name` identifier. |
 | No auth for subscribe | Run `teardrop auth status`. If unauthenticated, hand off to the `install` skill first. |
+| User wants to evaluate quality | Run `teardrop marketplace reputation` (all tools) or `teardrop marketplace reputation org/name` (one tool). |
 | User wants to publish | Hand off to the `publish-tool` skill. |
 
 ## Exit codes

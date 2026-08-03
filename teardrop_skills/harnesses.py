@@ -1,4 +1,4 @@
-﻿"""Harness detection and installation for teardrop-skills.
+"""Harness detection and installation for teardrop-skills.
 
 Native skill harnesses receive one symlink/junction (or copy) per skill
 directory under their skills root:
@@ -400,15 +400,11 @@ def _walk_up(cwd: Path) -> list[Path]:
 
 def _iter_skill_dirs(source: Path) -> list[Path]:
     return sorted(
-        p
-        for p in source.iterdir()
-        if p.is_dir() and (p / "SKILL.md").is_file()
+        p for p in source.iterdir() if p.is_dir() and (p / "SKILL.md").is_file()
     )
 
 
-def _log_dry_run(
-    source: Path, target: Path, skills: list[Path], mode: str
-) -> None:
+def _log_dry_run(source: Path, target: Path, skills: list[Path], mode: str) -> None:
     action = (
         "write .mdc rule files"
         if mode == "cursor-rules"

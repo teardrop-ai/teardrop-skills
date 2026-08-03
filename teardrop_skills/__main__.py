@@ -68,7 +68,7 @@ def main(argv: list[str] | None = None) -> int:
     )
 
     # Doctor subcommand: environment / compatibility self-check.
-    doctor_parser = subparsers.add_parser(
+    subparsers.add_parser(
         "doctor",
         help="Check skills path, harness detection, and teardrop-cli compatibility.",
     )
@@ -146,7 +146,7 @@ def _run_doctor() -> int:
         print("teardrop-cli: NOT INSTALLED (install via `pip install teardrop-skills`)")
         return 0
 
-    # Compare against the package requirement (teardrop-cli>=0.3.2,<0.4).
+    # Compare against the package requirement (teardrop-cli>=0.3.3,<0.4).
     req = next(
         (d for d in _requirements() if d.startswith("teardrop-cli")),
         None,

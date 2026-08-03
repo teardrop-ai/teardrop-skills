@@ -48,7 +48,14 @@ def _make_fake_tree() -> "object":
     auth.children["login"] = Node(
         "login",
         is_group=False,
-        options={"--email", "--siwe", "--key-file", "--token", "--client-id", "--client-secret"},
+        options={
+            "--email",
+            "--siwe",
+            "--key-file",
+            "--token",
+            "--client-id",
+            "--client-secret",
+        },
     )
     auth.children["status"] = Node("status", is_group=False, options={"--json"})
     auth.children["logout"] = Node("logout", is_group=False, options=set())
@@ -61,7 +68,11 @@ def _make_fake_tree() -> "object":
     tools.children["list"] = Node("list", is_group=False, options={"--json"})
     root.children["tools"] = tools
 
-    run = Node("run", is_group=False, options={"--thread", "--context", "--json", "--no-stream"})
+    run = Node(
+        "run",
+        is_group=False,
+        options={"--thread", "--context", "--json", "--no-stream"},
+    )
     root.children["run"] = run
     return root
 
@@ -132,7 +143,9 @@ def test_validate_accepts_flag_with_inline_value() -> None:
     from teardrop_skills.cli_surface import extract_skill_commands
 
     tree = _make_fake_tree()
-    cmds = extract_skill_commands("```bash\nteardrop tools publish --from-file=tool.json\n```")
+    cmds = extract_skill_commands(
+        "```bash\nteardrop tools publish --from-file=tool.json\n```"
+    )
     assert validate_commands(cmds, tree) == []
 
 
@@ -169,9 +182,8 @@ def test_skill_commands_exist_in_cli(name: str, cli_tree) -> None:
     text = (SKILLS_DIR / name / "SKILL.md").read_text(encoding="utf-8")
     cmds = extract_skill_commands(text, source_file=SKILLS_DIR / name / "SKILL.md")
     findings = validate_commands(cmds, cli_tree)
-    assert not findings, (
-        f"CLI drift in skill {name!r}:\n"
-        + "\n".join(f"  - {f.message}  (from: {f.command.raw!r})" for f in findings)
+    assert not findings, f"CLI drift in skill {name!r}:\n" + "\n".join(
+        f"  - {f.message}  (from: {f.command.raw!r})" for f in findings
     )
 
 

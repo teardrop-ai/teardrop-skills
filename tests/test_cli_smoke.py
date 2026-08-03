@@ -72,7 +72,6 @@ def _teardrop_exe() -> str | None:
     if found:
         return found
     # Fall back to the interpreter's own environment (venv) layout.
-    import sys
     from pathlib import Path
 
     candidates = [

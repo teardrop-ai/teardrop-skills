@@ -34,7 +34,7 @@ jobs:
         # Pin typer/click so `teardrop <group> --help` returns rc=0 (see CI).
         run: |
           python -m pip install "typer==0.12.5" "click==8.1.7"
-          python -m pip install "teardrop-cli>=0.3.2,<0.4"
+          python -m pip install "teardrop-cli>=0.3.3,<0.4"
 
       - name: Run structural + contract + smoke tests
         run: python -m pytest -q

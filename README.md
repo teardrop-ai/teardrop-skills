@@ -12,7 +12,7 @@ teardrop-skills            # prints installed skills path + next steps
 teardrop-skills --list     # lists skill names
 ```
 
-Requires Python ≥ 3.11. `teardrop-cli` is installed automatically as a dependency (compatible with `teardrop-cli >=0.3.2, <0.4`).
+Requires Python ≥ 3.11. `teardrop-cli` is installed automatically as a dependency (compatible with `teardrop-cli >=0.3.3, <0.4`).
 
 ---
 

@@ -82,9 +82,13 @@ def test_skill_has_required_sections(name: str, skill_files: dict[str, Path]) ->
 
 
 @pytest.mark.parametrize("name", EXPECTED_SKILLS)
-def test_skill_has_missing_inputs_section(name: str, skill_files: dict[str, Path]) -> None:
+def test_skill_has_missing_inputs_section(
+    name: str, skill_files: dict[str, Path]
+) -> None:
     text = skill_files[name].read_text(encoding="utf-8")
-    assert "## Missing inputs" in text, f"{name}: missing 'Missing inputs & fallbacks' section"
+    assert "## Missing inputs" in text, (
+        f"{name}: missing 'Missing inputs & fallbacks' section"
+    )
 
 
 def test_no_unexpected_top_level_skills() -> None:
@@ -158,7 +162,9 @@ class TestHarnessDetection:
         detected = detect_harness(cwd=tmp_path)
         assert detected is ClaudeCodeHarness
 
-    def test_detect_claude_code_personal(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    def test_detect_claude_code_personal(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         from teardrop_skills.harnesses import ClaudeCodeHarness, detect_harness
 
         home = tmp_path / "home"
@@ -230,7 +236,9 @@ class TestHarnessDetection:
         result = ClaudeCodeHarness.install_path(cwd=tmp_path)
         assert result == skills_dir
 
-    def test_claude_code_install_path_user(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    def test_claude_code_install_path_user(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         from teardrop_skills.harnesses import ClaudeCodeHarness
 
         home = tmp_path / "home"
@@ -251,7 +259,10 @@ class TestHarnessDetection:
     def test_opencode_install_path(self, tmp_path: Path) -> None:
         from teardrop_skills.harnesses import OpenCodeHarness
 
-        assert OpenCodeHarness.install_path(cwd=tmp_path) == tmp_path / ".opencode" / "skills"
+        assert (
+            OpenCodeHarness.install_path(cwd=tmp_path)
+            == tmp_path / ".opencode" / "skills"
+        )
 
 
 class TestHarnessInstall:
@@ -268,7 +279,9 @@ class TestHarnessInstall:
             )
         return source
 
-    def test_dry_run_prints_output(self, tmp_path: Path, capsys: pytest.CaptureFixture) -> None:
+    def test_dry_run_prints_output(
+        self, tmp_path: Path, capsys: pytest.CaptureFixture
+    ) -> None:
         from teardrop_skills.harnesses import ClaudeCodeHarness
 
         source = self._make_source(tmp_path)
@@ -318,7 +331,9 @@ class TestHarnessInstall:
         assert "description:" in text
         assert "# install" in text
 
-    def test_install_skills_api_dry_run(self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    def test_install_skills_api_dry_run(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
         """Test the top-level install_skills() with dry_run."""
         from teardrop_skills.harnesses import install_skills
 
