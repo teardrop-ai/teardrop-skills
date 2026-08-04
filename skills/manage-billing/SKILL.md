@@ -1,6 +1,6 @@
 ---
 name: manage-billing
-description: Check Teardrop credit balance and usage; direct users to the dashboard for top-ups.
+description: Use when the user asks about credit balance, spend, usage, or why a run paused; top-ups are dashboard-only.
 applyTo: "**/*"
 license: MIT
 ---
@@ -13,7 +13,7 @@ funds — top-ups and payment methods are dashboard-only.
 
 ## Prerequisites
 
-- `teardrop` on PATH (comes with `teardrop-skills` — verify: `teardrop --version`)
+- `teardrop` on PATH (verify: `teardrop --version`)
 - Authenticated session (see auth gate below)
 
 ## Auth gate
@@ -22,7 +22,7 @@ funds — top-ups and payment methods are dashboard-only.
 teardrop auth status
 ```
 
-If exit code ≠ `0` → hand off to `install` skill.
+Exit ≠ `0` → hand off to `install` skill.
 
 ## Workflow
 
@@ -62,15 +62,14 @@ Do not invent CLI top-up commands.
 
 ### 5. Explain the credit model (when the user asks)
 
-- **Non-BYOK orgs:** Teardrop shared provider keys — credits or x402 cover model
-  token costs **plus** the platform fee.
-- **BYOK orgs:** Provider billed via the org's encrypted key; credits or x402 still
-  cover the Teardrop orchestration fee. BYOK uses the configured model; pooled
-  smart routing is disabled.
-- **Promotional credit:** May be granted after email verification when the
-  server-side program is enabled. Not available to SIWE users or marketplace
-  author tools. A real top-up removes promotional restrictions. Do not assume
-  eligibility or a fixed amount.
+| Org type | Who pays model tokens | Who pays orchestration fee |
+|----------|----------------------|----------------------------|
+| Non-BYOK | Teardrop shared keys (credits/x402) | Same credits/x402 |
+| BYOK | Provider via org's encrypted key | Credits/x402 (pooled smart routing disabled) |
+
+**Promotional credit:** May be granted after email verification when the server-side
+program is enabled; not for SIWE users or marketplace author tools. A real top-up
+removes restrictions. Do not assume eligibility or amount.
 
 For LLM key / routing changes, use the `manage-org` skill (`llm-config`).
 
@@ -100,8 +99,3 @@ For LLM key / routing changes, use the `manage-org` skill (`llm-config`).
 | User asks "why did my run fail?" | Run `teardrop balance` and `teardrop usage`. If balance is low/zero, explain credits are exhausted and link to dashboard. |
 | User confused about BYOK + credits | Explain: BYOK pays the model provider directly but Teardrop still charges an orchestration fee (credits or x402). See `manage-org` for BYOK setup. |
 
-## Exit codes
-
-- `0` — success
-- `1` — error (auth, rate limit, API)
-- `2` — invalid input

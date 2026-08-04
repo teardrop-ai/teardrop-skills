@@ -1,6 +1,6 @@
 ---
 name: publish-tool
-description: Scaffold, probe, publish, and manage Teardrop marketplace tools end-to-end.
+description: Use when a tool author needs to scaffold, probe, publish, or manage a marketplace tool.
 applyTo: "**/*"
 license: MIT
 ---
@@ -14,21 +14,18 @@ payouts (see `withdraw-earnings`).
 
 ## Prerequisites
 
-- `teardrop` on PATH (comes with `teardrop-skills` — verify: `teardrop --version`)
+- `teardrop` on PATH (verify: `teardrop --version`)
 - Authenticated session (see auth gate below)
-- Reachable webhook endpoint for the tool
-- Settlement wallet address before first payout-capable publish
+- Reachable webhook endpoint; settlement wallet before first payout-capable publish
 - Tool name matching `^[a-z][a-z0-9_]*$`, ≤ 64 characters
 
 ## Auth gate
-
-Before any mutating command, run:
 
 ```bash
 teardrop auth status
 ```
 
-If exit code ≠ `0` or no identity shown, hand off to the `install` skill first.
+Exit ≠ `0` or no identity → hand off to `install` skill.
 
 ## Workflow
 
@@ -38,7 +35,7 @@ If exit code ≠ `0` or no identity shown, hand off to the `install` skill first
 teardrop tools init my_tool
 # optional:
 teardrop tools init my_tool --out custom.json --force
-teardrop tools init premium --with-marketplace   # include MCP + price fields
+teardrop tools init premium --with-marketplace   # only when publishing to marketplace: adds MCP + price fields
 ```
 
 Edit the generated JSON: set `webhook_url`, schemas, auth headers, and price.
@@ -83,14 +80,10 @@ teardrop tools publish --from-file tool.json \
   --settlement-wallet 0xYourChecksumAddress
 ```
 
-**Settlement wallet guidance:**
-- If the user authenticated via SIWE (`--siwe --generate-wallet`), the generated
-  Ethereum address can be used as the settlement wallet. Confirm with the user
-  before passing it.
-- If the user authenticated via email, they must provide a checksummed `0x`
-  Ethereum address. Do not invent one — ask explicitly.
-- Settlement wallet registration is required once before the first payout.
-  It can be set on publish or later via `teardrop tools update <tool> --settlement-wallet 0x...`.
+**Settlement wallet:** SIWE auth → the generated Ethereum address is a candidate
+(confirm with user). Email auth → ask for a checksummed `0x` address; do not invent
+one. Required once before first payout; set on publish or later via
+`teardrop tools update <tool> --settlement-wallet 0x...`.
 
 ### 4. End-to-end first-time publish chain
 
@@ -134,7 +127,7 @@ Shows platform tools, marketplace subscriptions, and the org's own tools.
 
 ## Troubleshooting
 
-| Symptom | Recovery |If SIWE auth: the generated Ethereum address is a candidate — confirm with user before using. If email auth: ask the user for a checksummed `0x` address. Do not invent one
+| Symptom | Recovery |
 |---------|----------|
 | Invalid tool name | Use `^[a-z][a-z0-9_]*$`, max 64 chars |
 | Probe exit `1` | Fix webhook uptime, TLS, timeout, or 5xx handler; retry probe |
@@ -155,8 +148,3 @@ Shows platform tools, marketplace subscriptions, and the org's own tools.
 | No input/output schema | Scaffold with `tools init` which generates placeholder schemas. Ask the user to describe inputs/outputs, then edit the JSON. |
 | Auth header unknown | Probe without auth first; if 4xx, ask the user for header name/value. |
 
-## Exit codes
-
-- `0` — success
-- `1` — error (auth, API, probe failure)
-- `2` — invalid input

@@ -1,6 +1,6 @@
 ---
 name: discover-marketplace
-description: Browse, search, subscribe, and unsubscribe Teardrop marketplace tools.
+description: Use when the user needs to find, evaluate, subscribe to, or unsubscribe from Teardrop marketplace tools.
 applyTo: "**/*"
 license: MIT
 ---
@@ -13,17 +13,17 @@ a signed-in session.
 
 ## Prerequisites
 
-- `teardrop` on PATH (comes with `teardrop-skills` — verify: `teardrop --version`)
+- `teardrop` on PATH (verify: `teardrop --version`)
 - Network access to the Teardrop API
-- Authenticated session for `subscribe` / `subscriptions` / `unsubscribe`
+- Auth required only for `subscribe` / `subscriptions` / `unsubscribe`
 
-## Auth gate (subscribe/unsubscribe only)
+## Auth gate (mutating commands only)
 
 ```bash
 teardrop auth status
 ```
 
-If exit code ≠ `0` → hand off to `install` skill before subscribing.
+Exit ≠ `0` → hand off to `install` skill.
 
 ## Workflow
 
@@ -120,8 +120,3 @@ teardrop run "Use marketplace weather data for London"
 | User wants to evaluate quality | Run `teardrop marketplace reputation` (all tools) or `teardrop marketplace reputation org/name` (one tool). |
 | User wants to publish | Hand off to the `publish-tool` skill. |
 
-## Exit codes
-
-- `0` — success
-- `1` — error (auth, rate limit, API)
-- `2` — invalid input

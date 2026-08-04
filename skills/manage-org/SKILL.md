@@ -1,6 +1,6 @@
 ---
 name: manage-org
-description: Configure org LLM/BYOK settings, MCP servers, model benchmarks, and local CLI config.
+description: Use when configuring org LLM/BYOK settings, MCP servers, model benchmarks, or local CLI config.
 applyTo: "**/*"
 license: MIT
 ---
@@ -14,9 +14,8 @@ settings. Use this skill for platform setup — not for end-user agent prompts
 
 ## Prerequisites
 
-- `teardrop` on PATH (comes with `teardrop-skills` — verify: `teardrop --version`)
-- Authenticated session for org-mutating commands (`llm-config`, `mcp`)
-- `models benchmarks` public catalogue works without auth; `--org` metrics need auth
+- `teardrop` on PATH (verify: `teardrop --version`)
+- Auth required for org-mutating commands (`llm-config`, `mcp`); `models benchmarks` public catalogue works without auth
 
 ## Auth gate (mutating commands only)
 
@@ -24,7 +23,7 @@ settings. Use this skill for platform setup — not for end-user agent prompts
 teardrop auth status
 ```
 
-If exit code ≠ `0` → hand off to `install` skill first.
+Exit ≠ `0` → hand off to `install` skill.
 
 ## Workflow
 
@@ -64,7 +63,7 @@ teardrop llm-config set \
 ```
 
 **Providers:** `openrouter`, `google`, `anthropic`, `openai`  
-**Routing:** `default` · `cost` · `speed` · `quality`  
+**Routing:** `default` (balanced) · `cost` (cheapest) · `speed` (fastest) · `quality` (best output)  
 **Validation:** temperature 0.0–2.0 · max tokens 1–200,000 · timeout ≥ 1s
 
 BYOK key handling (never echo secrets into logs or commits):
@@ -160,8 +159,3 @@ Writable keys: `api_url`, `email`, `org_id`. Tokens/secrets only via `auth login
 | No org ID for benchmarks | Run `teardrop auth status --json` to extract `org_id`. |
 | User wants to change config key | Only `api_url`, `email`, `org_id` are writable via `config set`. Tokens/secrets require `auth login` / `auth logout`. |
 
-## Exit codes
-
-- `0` — success
-- `1` — error (auth, rate limit, API)
-- `2` — invalid input

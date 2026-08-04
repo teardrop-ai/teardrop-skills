@@ -1,6 +1,6 @@
 ---
 name: install
-description: Install Teardrop CLI, authenticate, and complete first-time onboarding.
+description: Use when the user needs CLI install, authentication, login/signup, session checks, or first-time onboarding.
 applyTo: "**/*"
 license: MIT
 ---
@@ -14,11 +14,16 @@ session checks, or logout.
 
 ## Prerequisites
 
-- Python ≥ 3.11
-- `teardrop` on PATH (comes with `teardrop-skills` — verify: `teardrop --version`)
+- Python ≥ 3.11; `teardrop` on PATH (verify: `teardrop --version`)
 - Network access to PyPI and the Teardrop API
-- For SIWE: ability to generate or supply an Ethereum private key (never commit keys)
-- For email auth: a password ≥ 8 characters with ≥ 1 digit
+- SIWE: ability to generate/supply an Ethereum private key (never commit keys)
+- Email auth: password ≥ 8 chars with ≥ 1 digit
+
+## Glossary (shared terms)
+
+- **Marketplace tool** — a published tool others subscribe to; **agent tool** — a tool an agent can call.
+- **Credits** — org balance spent on runs (`teardrop balance`); **earnings** — author USDC payouts (`teardrop earnings balance`).
+- **run** — one-shot execution; **chat** — stateful multi-turn thread.
 
 ## Workflow
 
@@ -93,16 +98,10 @@ Expect exit code `0` and a resolved identity/org. On failure, re-run login.
 
 ### 5. Credential precedence (do not fight env vars)
 
-If login appears ignored, check environment credentials first — they override
-interactive sessions:
-
-1. `TEARDROP_API_KEY`
-2. `TEARDROP_EMAIL` + `TEARDROP_SECRET`
-3. `TEARDROP_CLIENT_ID` + `TEARDROP_CLIENT_SECRET`
-4. System keyring
-5. `access_token` in `~/.teardrop/config.toml`
-
-Unset or update rejected env credentials before retrying interactive login.
+Env credentials override interactive sessions. Precedence: `TEARDROP_API_KEY` →
+`TEARDROP_EMAIL`+`TEARDROP_SECRET` → `TEARDROP_CLIENT_ID`+`TEARDROP_CLIENT_SECRET` →
+system keyring → `access_token` in `~/.teardrop/config.toml`. Unset/update stale env
+credentials before retrying interactive login.
 
 ### 6. Sign out when requested
 

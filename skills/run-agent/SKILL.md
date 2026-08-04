@@ -1,6 +1,6 @@
 ---
 name: run-agent
-description: Run one-shot or chat agents and automate them with schedules and event triggers.
+description: Use when the user wants to run an agent, continue a chat, or automate with schedules/event triggers.
 applyTo: "**/*"
 license: MIT
 ---
@@ -13,26 +13,21 @@ wants to prompt an agent, continue a thread, estimate cost, or automate runs.
 
 ## Prerequisites
 
-- `teardrop` on PATH (comes with `teardrop-skills` — verify: `teardrop --version`)
-- Authenticated session for paid runs (see auth gate below)
-- Sufficient credits or x402 payment path (see `manage-billing` if runs fail on credit)
+- `teardrop` on PATH (verify: `teardrop --version`)
+- Auth + sufficient credits/x402 for paid runs (see `manage-billing` if runs fail on credit)
 - Optional: tool policy file, context JSON, marketplace subscriptions
 
 ## Auth gate
-
-Before any paid run:
 
 ```bash
 teardrop auth status
 ```
 
-If exit code ≠ `0` → hand off to `install` skill. If balance is empty and runs fail → `manage-billing`.
+Exit ≠ `0` → hand off to `install` skill. Empty balance + failing runs → `manage-billing`.
 
 ## Workflow
 
 ### 1. One-shot agent run (`teardrop run`)
-
-### 2. One-shot agent run (`teardrop run`)
 
 Best for scripts and single prompts:
 
@@ -105,6 +100,9 @@ teardrop schedules delete <schedule-id> --yes
 UTF-8 or unreadable files produce a clean CLI error. After creating or updating a
 schedule, verify with `teardrop schedules get <schedule-id> --json`.
 
+Schedules are **interval-only** (`--interval-seconds`); there is no cron syntax or
+timezone field. For "daily at 9am", compute the interval from now.
+
 ### 5. Event triggers (signed inbound webhooks)
 
 ```bash
@@ -167,8 +165,3 @@ immediately. Later `list` / `get` / `update` never return the plaintext secret a
 | No `--context` JSON | Omit `--context` — the agent works without structured context. |
 | User wants cost estimate | Run with `--estimate-cost` (no run performed, just prints cost). |
 
-## Exit codes
-
-- `0` — success
-- `1` — error (auth, rate limit, API, insufficient credit)
-- `2` — invalid input (e.g. malformed `--context` JSON)

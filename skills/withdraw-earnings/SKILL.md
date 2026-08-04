@@ -1,6 +1,6 @@
 ---
 name: withdraw-earnings
-description: Check marketplace earnings and withdraw USDC to the registered settlement wallet.
+description: Use when a tool author wants to check earnings or withdraw USDC to the settlement wallet.
 applyTo: "**/*"
 license: MIT
 ---
@@ -14,10 +14,9 @@ during initial publish (see `publish-tool`).
 
 ## Prerequisites
 
-- `teardrop` on PATH (comes with `teardrop-skills` — verify: `teardrop --version`)
-- Authenticated session as the tool author org (see auth gate below)
-- Settlement wallet already registered (typically during first
-  `teardrop tools publish --settlement-wallet 0x...`)
+- `teardrop` on PATH (verify: `teardrop --version`)
+- Authenticated as the tool author org (see auth gate below)
+- Settlement wallet registered (typically via `teardrop tools publish --settlement-wallet 0x...`)
 - Positive earnings balance for withdrawals
 
 ## Auth gate
@@ -26,7 +25,7 @@ during initial publish (see `publish-tool`).
 teardrop auth status
 ```
 
-If exit code ≠ `0` → hand off to `install` skill first.
+Exit ≠ `0` → hand off to `install` skill.
 
 ## Workflow
 
@@ -102,8 +101,3 @@ teardrop earnings withdrawals --limit 20 --json
 | No tool filter for history | Omit `--tool` — show all earnings history. |
 | User confused about balance vs credits | Show the comparison table in step 6. Credits (`teardrop balance`) fund runs; earnings (`teardrop earnings balance`) are withdrawable USDC. |
 
-## Exit codes
-
-- `0` — success
-- `1` — error (auth, rate limit, API, withdraw failure)
-- `2` — invalid input
