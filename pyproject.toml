@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "teardrop-skills"
-version = "0.3.1"
+version = "0.3.2"
 description = "Agent skills for Teardrop CLI workflows (install, publish, run, billing, marketplace, org, earnings)."
 readme = "README.md"
 license = "MIT"
